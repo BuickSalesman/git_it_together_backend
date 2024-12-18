@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'git_it_together_backend',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
