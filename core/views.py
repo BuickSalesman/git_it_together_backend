@@ -48,7 +48,7 @@ def update_user(request):
                 return JsonResponse({"error": "Current username is required"}, status=400)
 
             try:
-                user = User.object.get(username=current_username)
+                user = User.objects.get(username=current_username)
             except User.DoesNotExist:
                 return JsonResponse({"error": "User does not exist"}, status=404)
 
