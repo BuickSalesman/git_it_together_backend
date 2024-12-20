@@ -42,8 +42,44 @@ def create_user(request):
             return JsonResponse({"message": "User created successfully", "user_id": user.id}, status=200)
 
         except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data."}, status=400
-                                )
+            return JsonResponse({"error": "Invalid JSON data."}, status=400)
+
+    else:
+        return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
+
+
+@csrf_exempt
+def create_repo(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            repo_name = data.get('name')
+            notes_enabled = data.get('notes_enabled', False)
+
+            if not username or not repo_name:
+                return JsonResponse({"error": "Username and repo name are required"}, status=400)
+
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "User does not exist"}, status=404)
+
+            repo = repo.objects.create(
+                user=user, name=repo_name, notes_enabled=notes_enabled)
+
+            return JsonResponse({
+                "message": "Repository created successfully",
+                "repo_id": repo.id,
+                "user": user.username,
+                "name": repo.name,
+                "notes_enabled": repo.notes_enabled,
+                "created_at": repo.created_at.isoformat()
+            }, status=201)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
     else:
         return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
