@@ -142,7 +142,39 @@ def create_repo(request):
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
     else:
-        return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
+        return JsonResponse({"error": "This endpoint only supports POST requests"}, status=405)
+
+
+@csrf_exempt
+def delete_repo(request):
+    if request.method == "DELETE":
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
+            repo_name = data.get("repo_name")
+
+            if not username or not repo_name:
+                return JsonResponse({"error": "Username and repo name are required"}, status=400)
+
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "User does not exist"}, status=404)
+
+            try:
+                repo = Repo.objects.get(user=user, repo_name=repo_name)
+            except Repo.DoesNotExist:
+                return JsonResponse("error": "Repository not found for this user", status=404)
+
+            repo.delete()
+
+            return JsonResponse("message": "Repository deleted successfully", status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
+    else:
+        return JsonResponse({"error": "This endpoint only supports DELETE requests"}, status=405)
 
 # endregion REPOS
 
