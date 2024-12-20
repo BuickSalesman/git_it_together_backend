@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from core.views import create_user, create_repo, create_commit
 from core.views import update_user
-from core.views import delete_user
+from core.views import delete_user, delete_repo
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,6 +29,7 @@ urlpatterns = [
     path("users/delete/", delete_user, name="delete_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
+    path("repos/delete", delete_repo, name="delete_repo"),
 
     path("commits/create/", create_commit, name="create_commit"),
 ]

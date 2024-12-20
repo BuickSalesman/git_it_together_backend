@@ -8,6 +8,8 @@ from django.shortcuts import render
 
 from .models import User, Repo, Commit
 
+# region USER
+
 
 @csrf_exempt
 def create_user(request):
@@ -99,6 +101,10 @@ def delete_user(request):
     else:
         return JsonResponse({"error": "This endpoint only supports DELETE requests"}, status=405)
 
+# endregion USER
+
+# region REPOS
+
 
 @csrf_exempt
 def create_repo(request):
@@ -137,6 +143,10 @@ def create_repo(request):
 
     else:
         return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
+
+# endregion REPOS
+
+# region COMMITS
 
 
 @csrf_exempt
@@ -183,3 +193,4 @@ def create_commit(request):
 
     else:
         return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
+# endregion COMMITS
