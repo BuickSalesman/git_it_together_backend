@@ -9,18 +9,6 @@ from django.shortcuts import render
 from .models import User, Repo, Commit
 
 
-# retrieves users via get request to the database.
-def get_users(request):
-    users = User.objects.all()
-    users_data = [
-        {
-            "id": user.id, "username": user.username,
-        }
-        for user in users
-    ]
-    return JsonResponse({"users": users_data})
-
-
 @csrf_exempt
 def create_user(request):
     if request.method == "POST":

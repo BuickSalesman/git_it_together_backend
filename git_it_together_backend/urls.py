@@ -16,15 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import get_users, create_user, create_repo, create_commit, delete_user
+from core.views import create_user, create_repo, create_commit
+from core.views import update_user
+from core.views import delete_user
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("users/create/", create_user, name="create_user"),
+    path("users/update/", update_user, name="update_user"),
 
-    # will change to get a particular users user info, not all users as it is now
-    path("users/", get_users, name="get_users"),
     path("users/delete/", delete_user, name="delete_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
