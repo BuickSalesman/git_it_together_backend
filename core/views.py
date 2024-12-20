@@ -66,7 +66,7 @@ def create_repo(request):
             except User.DoesNotExist:
                 return JsonResponse({"error": "User does not exist"}, status=404)
 
-            repo = repo.objects.create(
+            repo = Repo.objects.create(
                 user=user, name=repo_name, notes_enabled=notes_enabled)
 
             return JsonResponse({
