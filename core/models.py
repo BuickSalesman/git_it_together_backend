@@ -8,6 +8,9 @@ class Repo(models.Model):
     notes_enabled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('user', 'name')
+
 
 class Commit(models.Model):
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
