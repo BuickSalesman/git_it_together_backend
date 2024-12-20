@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import get_users, create_user, create_repo
+from core.views import get_users, create_user, create_repo, create_commit
 
 urlpatterns = [
     path('admin/', admin.site.urls),
