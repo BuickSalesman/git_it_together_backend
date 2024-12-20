@@ -48,6 +48,31 @@ def create_user(request):
 
 
 @csrf_exempt
+def delete_user(request):
+    if request.method == 'DELETE':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+
+            if not username:
+                JsonResponse({"error": "Username is required"}, status=400)
+
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "User not found"}, status=404)
+
+            user.delete()
+            return JsonResponse({"message": "User deleted successfully"}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
+    else:
+        return JsonResponse({"error": "This endpoint only supports DELETE requests"}, status=405)
+
+
+@csrf_exempt
 def create_repo(request):
     if request.method == 'POST':
         try:
@@ -107,7 +132,7 @@ def create_commit(request):
             try:
                 repo = Repo.objects.get(user=user, name=repo_name)
             except Repo.DoesNotExist:
-                return JsonResponse({"error": "Repo does not exist for this user"})
+                return JsonResponse({"error": "Repo does not exist for this user"}, status=404)
 
             commit = Commit.objects.create(
                 repo=repo,
@@ -129,4 +154,4 @@ def create_commit(request):
             return JsonResponse({"error": "Invalid JSON data."}, status=400)
 
     else:
-        return JsonResponse({"error": "This endpoint only supports POST requests."})
+        return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)

@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import get_users, create_user, create_repo, create_commit
+from core.views import get_users, create_user, create_repo, create_commit, delete_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', get_users, name='get_users'),
     path('users/create/', create_user, name='create_user'),
+    path('users/delete/', delete_user, name='delete_user'),
     path('repos/create/', create_repo, name='create_repo'),
     path('commits/create/', create_commit, name='create_commit'),
 ]
