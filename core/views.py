@@ -1,5 +1,6 @@
 import json
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render
 
@@ -21,6 +22,7 @@ def get_users(request):
     return JsonResponse({"users": users_data})
 
 
+@csrf_exempt
 def create_user(request):
     if request.method == 'POST':
         try:
