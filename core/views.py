@@ -6,8 +6,7 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from .models import User
-from .models import Repo
+from .models import User, Repo, Commit
 
 
 # retrieves users via get request to the database.

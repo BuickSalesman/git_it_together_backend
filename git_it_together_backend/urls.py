@@ -23,4 +23,5 @@ urlpatterns = [
     path('users/', get_users, name='get_users'),
     path('users/create/', create_user, name='create_user'),
     path('repos/create/', create_repo, name='create_repo'),
+    path('commits/create/', create_commit, name='create_commit'),
 ]
