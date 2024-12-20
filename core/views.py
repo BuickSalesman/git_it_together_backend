@@ -23,11 +23,11 @@ def get_users(request):
 
 @csrf_exempt
 def create_user(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
             data = json.loads(request.body)
-            username = data.get('username')
-            password = data.get('password')
+            username = data.get("username")
+            password = data.get("password")
 
             if not username or not password:
                 return JsonResponse({"error": "Username and password are required."}, status=400)
@@ -48,11 +48,51 @@ def create_user(request):
 
 
 @csrf_exempt
-def delete_user(request):
-    if request.method == 'DELETE':
+def update_user(request):
+    if request.method == "PATCH":
         try:
             data = json.loads(request.body)
-            username = data.get('username')
+            current_username = data.get("current_username")
+            new_username = data.get("new_username", None)
+            new_password = data.get("new_password", None)
+
+            if not current_username:
+                return JsonResponse({"error": "Current username is required"}, status=400)
+
+            try:
+                user = User.object.get(username=current_username)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "User does not exist"}, status=404)
+
+            if new_username and new_username != user.username:
+                if User.objects.filter(username=new_username).exists():
+                    return JsonResponse({"error": "This username is already taken"}, status=400)
+                user.username = new_username
+
+            if new_password:
+                user.set_password(new_password)
+
+            user.save()
+
+            return JsonResponse({
+                "message": "User updated successfully",
+                "user_id": user.id,
+                "username": user.username
+            }, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
+    else:
+        return JsonResponse({"error": "This endpoint only supports PATCH requests"}, status=405)
+
+
+@csrf_exempt
+def delete_user(request):
+    if request.method == "DELETE":
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
 
             if not username:
                 JsonResponse({"error": "Username is required"}, status=400)
@@ -74,12 +114,12 @@ def delete_user(request):
 
 @csrf_exempt
 def create_repo(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
             data = json.loads(request.body)
-            username = data.get('username')
-            repo_name = data.get('name')
-            notes_enabled = data.get('notes_enabled', False)
+            username = data.get("username")
+            repo_name = data.get("name")
+            notes_enabled = data.get("notes_enabled", False)
 
             if not username or not repo_name:
                 return JsonResponse({"error": "Username and repo name are required"}, status=400)
@@ -116,10 +156,10 @@ def create_commit(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            username = data.get('username')
-            repo_name = data.get('repo_name')
-            note_title = data.get('note_title', None)
-            note_body = data.get('note_body', None)
+            username = data.get("username")
+            repo_name = data.get("repo_name")
+            note_title = data.get("note_title", None)
+            note_body = data.get("note_body", None)
 
             if not username or not repo_name:
                 return JsonResponse({"error": "Username and repo_name are required"}, status=400)
