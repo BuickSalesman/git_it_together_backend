@@ -19,17 +19,20 @@ from django.urls import path
 from core.views import create_user, create_repo, create_commit
 from core.views import update_user
 from core.views import delete_user, delete_repo
+from core.views import get_user, get_repos, get_commits
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("users/create/", create_user, name="create_user"),
+    path("user/<str:username>/", get_user, name="get_user"),
     path("users/update/", update_user, name="update_user"),
-
     path("users/delete/", delete_user, name="delete_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
+    path("repos/", get_repos, name="get_repos"),
     path("repos/delete/", delete_repo, name="delete_repo"),
 
     path("commits/create/", create_commit, name="create_commit"),
+    path("commits/", get_commits, name="get_commits")
 ]

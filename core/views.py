@@ -225,4 +225,6 @@ def create_commit(request):
 
     else:
         return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
+
+
 # endregion COMMITS
