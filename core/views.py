@@ -37,6 +37,23 @@ def create_user(request):
         return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
 
 
+def get_user(request, username):
+    if request.method == "GET":
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+        user_data = {
+            "username": user.username,
+            "date_joined": user.date_joined.isoformat()
+        }
+        return JsonResponse({"user": user_data}, status=200)
+
+    else:
+        return JsonResponse({"error": "This endpoint only supports GET requests"}, status=405)
+
+
 @csrf_exempt
 def update_user(request):
     if request.method == "PATCH":
