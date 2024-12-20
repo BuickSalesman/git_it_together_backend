@@ -112,10 +112,10 @@ def create_repo(request):
         try:
             data = json.loads(request.body)
             username = data.get("username")
-            repo_name = data.get("name")
+            name = data.get("name")
             notes_enabled = data.get("notes_enabled", False)
 
-            if not username or not repo_name:
+            if not username or not name:
                 return JsonResponse({"error": "Username and repo name are required"}, status=400)
 
             try:
@@ -123,11 +123,11 @@ def create_repo(request):
             except User.DoesNotExist:
                 return JsonResponse({"error": "User does not exist"}, status=404)
 
-            if Repo.objects.filter(user=user, name=repo_name).exists():
+            if Repo.objects.filter(user=user, name=name).exists():
                 return JsonResponse({"error": "A repository with this name already exists for this user"}, status=400)
 
             repo = Repo.objects.create(
-                user=user, name=repo_name, notes_enabled=notes_enabled)
+                user=user, name=name, notes_enabled=notes_enabled)
 
             return JsonResponse({
                 "message": "Repository created successfully",
@@ -151,9 +151,9 @@ def delete_repo(request):
         try:
             data = json.loads(request.body)
             username = data.get("username")
-            repo_name = data.get("repo_name")
+            name = data.get("name")
 
-            if not username or not repo_name:
+            if not username or not name:
                 return JsonResponse({"error": "Username and repo name are required"}, status=400)
 
             try:
@@ -162,13 +162,13 @@ def delete_repo(request):
                 return JsonResponse({"error": "User does not exist"}, status=404)
 
             try:
-                repo = Repo.objects.get(user=user, repo_name=repo_name)
+                repo = Repo.objects.get(user=user, name=name)
             except Repo.DoesNotExist:
-                return JsonResponse("error": "Repository not found for this user", status=404)
+                return JsonResponse({"error": "Repository not found for this user"}, status=404)
 
             repo.delete()
 
-            return JsonResponse("message": "Repository deleted successfully", status=200)
+            return JsonResponse({"message": "Repository deleted successfully"}, status=200)
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
@@ -187,12 +187,12 @@ def create_commit(request):
         try:
             data = json.loads(request.body)
             username = data.get("username")
-            repo_name = data.get("repo_name")
+            name = data.get("name")
             note_title = data.get("note_title", None)
             note_body = data.get("note_body", None)
 
-            if not username or not repo_name:
-                return JsonResponse({"error": "Username and repo_name are required"}, status=400)
+            if not username or not name:
+                return JsonResponse({"error": "Username and name are required"}, status=400)
 
             try:
                 user = User.objects.get(username=username)
@@ -200,7 +200,7 @@ def create_commit(request):
                 return JsonResponse({"error": "User does not exist"}, status=404)
 
             try:
-                repo = Repo.objects.get(user=user, name=repo_name)
+                repo = Repo.objects.get(user=user, name=name)
             except Repo.DoesNotExist:
                 return JsonResponse({"error": "Repo does not exist for this user"}, status=404)
 

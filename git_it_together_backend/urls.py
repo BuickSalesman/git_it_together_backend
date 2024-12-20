@@ -29,7 +29,7 @@ urlpatterns = [
     path("users/delete/", delete_user, name="delete_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
-    path("repos/delete", delete_repo, name="delete_repo"),
+    path("repos/delete/", delete_repo, name="delete_repo"),
 
     path("commits/create/", create_commit, name="create_commit"),
 ]
