@@ -21,6 +21,11 @@ from core.views import update_user
 from core.views import delete_user, delete_repo
 from core.views import get_user, get_repos, get_commits
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 
