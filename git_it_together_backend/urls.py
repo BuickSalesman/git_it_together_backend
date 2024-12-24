@@ -19,7 +19,9 @@ from django.urls import path
 from core.views import create_user, create_repo, create_commit
 from core.views import update_user
 from core.views import delete_user, delete_repo
-from core.views import get_user, get_repos, get_commits
+from core.views import get_user
+
+# get_repos, get_commits
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -35,9 +37,12 @@ urlpatterns = [
     path("users/delete/", delete_user, name="delete_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
-    path("repos/", get_repos, name="get_repos"),
+    # path("repos/", get_repos, name="get_repos"),
     path("repos/delete/", delete_repo, name="delete_repo"),
 
     path("commits/create/", create_commit, name="create_commit"),
-    path("commits/", get_commits, name="get_commits")
+    # path("commits/", get_commits, name="get_commits"),
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
