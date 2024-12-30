@@ -14,6 +14,34 @@ from .models import User, Repo, Commit
 
 
 @csrf_exempt
+def jwt_generation(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
+            password = data.get("password")
+
+            if not username or not password:
+                return JsonResponse({"error": "Username and password are required."}, status=400)
+
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                refresh = RefreshTokens.for_user(user)
+                return JsonResponse({
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                }, status=200)
+            else:
+                return JsonResponse({"error": "Invalid username or password"}, status=401)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data."}, status=400)
+
+    else:
+        return JsonResponse({"error": "This enpoint only supports POST requests"}, status=405)
+
+
+@csrf_exempt
 def create_user(request):
     if request.method == "POST":
         try:
