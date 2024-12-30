@@ -3,6 +3,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from django.shortcuts import render
 
@@ -67,21 +70,15 @@ def create_user(request):
         return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
 
 
-def get_user(request, username):
-    if request.method == "GET":
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({"error": "User not found"}, status=404)
-
-        user_data = {
-            "username": user.username,
-            "date_joined": user.date_joined.isoformat()
-        }
-        return JsonResponse({"user": user_data}, status=200)
-
-    else:
-        return JsonResponse({"error": "This endpoint only supports GET requests"}, status=405)
+@api_view(["GET"])
+@permission_classes({IsAuthenticated})
+def get_current_user(request):
+    user = request.user
+    user_data = {
+        "username": user.username,
+        "date_joined": user.date_joined.isoformat()
+    }
+    return Response({"user": user_data}, status=200)
 
 
 @csrf_exempt
