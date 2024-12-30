@@ -2,7 +2,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshTokens
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.shortcuts import render
 
@@ -26,7 +26,7 @@ def jwt_generation(request):
 
             user = authenticate(username=username, password=password)
             if user is not None:
-                refresh = RefreshTokens.for_user(user)
+                refresh = RefreshToken.for_user(user)
                 return JsonResponse({
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
