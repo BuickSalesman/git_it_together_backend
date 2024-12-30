@@ -20,7 +20,7 @@ from core.views import create_user, create_repo, create_commit
 from core.views import update_user
 from core.views import delete_user, delete_repo
 from core.views import get_user
-
+from core.views import jwt_generation
 # get_repos, get_commits
 
 from rest_framework_simplejwt.views import (
@@ -42,6 +42,8 @@ urlpatterns = [
 
     path("commits/create/", create_commit, name="create_commit"),
     # path("commits/", get_commits, name="get_commits"),
+
+    path("auth/test_token", jwt_generation, name="jwt_generation"),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
