@@ -32,9 +32,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("users/create/", create_user, name="create_user"),
-    path("user/<str:username>/", get_user, name="get_user"),
-    path("users/update/", update_user, name="update_user"),
-    path("users/delete/", delete_user, name="delete_user"),
+    path("users/me/", get_user, name="get_current_user"),
+    path("users/me/update/", update_user, name="update_current_user"),
+    path("users/me/delete/", delete_user, name="delete_current_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
     # path("repos/", get_repos, name="get_repos"),
