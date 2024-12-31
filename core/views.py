@@ -81,44 +81,30 @@ def get_current_user(request):
     return Response({"user": user_data}, status=200)
 
 
-@csrf_exempt
-def update_user(request):
-    if request.method == "PATCH":
-        try:
-            data = json.loads(request.body)
-            current_username = data.get("current_username")
-            new_username = data.get("new_username", None)
-            new_password = data.get("new_password", None)
+@api_view(["PATCH"])
+@permission_classes({IsAuthenticated})
+def update_current_user(request):
+    user = request.user
+    data = request.data
 
-            if not current_username:
-                return JsonResponse({"error": "Current username is required"}, status=400)
+    new_username = data.get("new_username", None)
+    new_password = data.get("new_password", None)
 
-            try:
-                user = User.objects.get(username=current_username)
-            except User.DoesNotExist:
-                return JsonResponse({"error": "User does not exist"}, status=404)
+    if new_username and new_username != user.username:
+        if User.objects.filter(username=new_username).exist():
+            return Response({"error": "This username is already taken"}, status=400)
+        user.username = new_username
 
-            if new_username and new_username != user.username:
-                if User.objects.filter(username=new_username).exists():
-                    return JsonResponse({"error": "This username is already taken"}, status=400)
-                user.username = new_username
+    if new_password:
+        user.set_password(new_password)
 
-            if new_password:
-                user.set_password(new_password)
+    user.save()
 
-            user.save()
-
-            return JsonResponse({
-                "message": "User updated successfully",
-                "user_id": user.id,
-                "username": user.username
-            }, status=200)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data"}, status=400)
-
-    else:
-        return JsonResponse({"error": "This endpoint only supports PATCH requests"}, status=405)
+    return Response({
+        "message": "User updated successfully",
+        "user_id": user.id,
+        "username": user.username
+    }, status=200)
 
 
 @csrf_exempt
