@@ -91,7 +91,7 @@ def update_current_user(request):
     new_password = data.get("new_password", None)
 
     if new_username and new_username != user.username:
-        if User.objects.filter(username=new_username).exist():
+        if User.objects.filter(username=new_username).exists():
             return Response({"error": "This username is already taken"}, status=400)
         user.username = new_username
 
