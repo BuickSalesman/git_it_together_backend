@@ -107,32 +107,18 @@ def update_current_user(request):
     }, status=200)
 
 
-@csrf_exempt
-def delete_user(request):
-    if request.method == "DELETE":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
+@api_view(["DELETE"])
+@permission_classes({IsAuthenticated})
+def delete_current_user(request):
+    user = request.user
+    user.delete()
 
-            if not username:
-                JsonResponse({"error": "Username is required"}, status=400)
-
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return JsonResponse({"error": "User not found"}, status=404)
-
-            user.delete()
-            return JsonResponse({"message": "User deleted successfully"}, status=200)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data"}, status=400)
-
-    else:
-        return JsonResponse({"error": "This endpoint only supports DELETE requests"}, status=405)
+    return Response({
+        "message": "User deleted successfully",
+        "username": user.username
+    }, status=200)
 
 # endregion USER
-
 # region REPOS
 
 
