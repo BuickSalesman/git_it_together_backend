@@ -122,43 +122,35 @@ def delete_current_user(request):
 # region REPOS
 
 
-@csrf_exempt
+@api_view(["POST"])
+@permission_classes({IsAuthenticated})
 def create_repo(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            name = data.get("name")
-            notes_enabled = data.get("notes_enabled", False)
+    user = request.user
+    data = request.data
 
-            if not username or not name:
-                return JsonResponse({"error": "Username and repo name are required"}, status=400)
+    name = data.get("name")
+    notes_enabled = data.get("notes_enabled", False)
 
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return JsonResponse({"error": "User does not exist"}, status=404)
+    if not name:
+        return Response({"error": "Repository must have a name."}, status=400)
 
-            if Repo.objects.filter(user=user, name=name).exists():
-                return JsonResponse({"error": "A repository with this name already exists for this user"}, status=400)
+    if Repo.objects.filter(user=user, name=name).exists():
+        return Response({"error": "A repo of thius name already exists for this user."}, status=400)
 
-            repo = Repo.objects.create(
-                user=user, name=name, notes_enabled=notes_enabled)
+    repo = Repo.objects.create(
+        user=user,
+        name=name,
+        notes_enabled=notes_enabled
+    )
 
-            return JsonResponse({
-                "message": "Repository created successfully",
-                "repo_id": repo.id,
-                "user": user.username,
-                "name": repo.name,
-                "notes_enabled": repo.notes_enabled,
-                "created_at": repo.created_at.isoformat()
-            }, status=201)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data"}, status=400)
-
-    else:
-        return JsonResponse({"error": "This endpoint only supports POST requests"}, status=405)
+    return Response({
+        "message": "Repository created successfully",
+        "repo_id": repo.id,
+        "user": user.username,
+        "name": repo.name,
+        "notes_enabled": repo.notes_enabled,
+        "created_at": repo.created_at.isoformat()
+    }, status=201)
 
 
 @csrf_exempt
