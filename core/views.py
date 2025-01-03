@@ -177,51 +177,38 @@ def delete_repo(request):
 # endregion REPOS
 # region COMMITS
 
-
-@csrf_exempt
+@api_view(["POST"])
+@permission_classes({IsAuthenticated})
 def create_commit(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            name = data.get("name")
-            note_title = data.get("note_title", None)
-            note_body = data.get("note_body", None)
+    user = request.user
+    data = request.data
 
-            if not username or not name:
-                return JsonResponse({"error": "Username and name are required"}, status=400)
+    repo_name = data.get("name")
+    note_title = data.get("note_title", None)
+    note_body = data.get("note_body", None)
 
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return JsonResponse({"error": "User does not exist"}, status=404)
+    if not repo_name:
+        return Response({"error": "Repo name is required"}, status=400)
 
-            try:
-                repo = Repo.objects.get(user=user, name=name)
-            except Repo.DoesNotExist:
-                return JsonResponse({"error": "Repo does not exist for this user"}, status=404)
+    try:
+        repo = Repo.objects.get(user=user, name=repo_name)
+    except Repo.DoesNotExist:
+        return Response({"error": "Repo does not exist for this user."}, status=404)
 
-            commit = Commit.objects.create(
-                repo=repo,
-                note_title=note_title,
-                note_body=note_body
-            )
+    commit = Commit.objects.create(
+        repo=repo,
+        note_title=note_title,
+        note_body=note_body
+    )
 
-            return JsonResponse({
-                "message": "Commit created successfully",
-                "commit_id": commit.id,
-                "repo": repo.name,
-                "user": user.username,
-                "note_title": commit.note_title,
-                "note_body": commit.note_body,
-                "created_at": commit.created_at.isoformat()
-            }, status=201)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data."}, status=400)
-
-    else:
-        return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
-
+    return Response({
+        "message": "Commit created successfully",
+        "commit_id": commit.id,
+        "repo": repo.name,
+        "user": user.username,
+        "note_title": commit.note_title,
+        "note_body": commit.note_body,
+        "created_at": commit.created_at.isoformat()
+    }, status=201)
 
 # endregion COMMITS
