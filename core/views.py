@@ -153,14 +153,14 @@ def get_repos(request):
             "id": repo.id,
             "name": repo.name,
             "notes_enabled": repo.notes_enabled,
-            "created_at": repo.created_at
+            "created_at": repo.created_at.isoformat()
         }
         for repo in repos
     ]
 
     return Response({
         "user_repos": user_repos
-    })
+    }, status=200)
 
 
 @api_view(["DELETE"])
@@ -220,5 +220,27 @@ def create_commit(request):
         "note_body": commit.note_body,
         "created_at": commit.created_at.isoformat()
     }, status=201)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_commits(request):
+    user = request.user
+    commits = Commit.objects.filter(repo__user=user)
+
+    user_commits = [
+        {
+            "id": commit.id,
+            "note_title": commit.note_title,
+            "note_body": commit.note_body,
+            "created_at": commit.created_at.isoformat(),
+            "repo_name": commit.repo.name
+        }
+        for commit in commits
+    ]
+
+    return Response({
+        "user_commits": user_commits
+    }, status=200)
 
 # endregion COMMITS
