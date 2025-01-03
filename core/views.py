@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from django.shortcuts import render
@@ -44,34 +44,26 @@ def jwt_generation(request):
         return JsonResponse({"error": "This enpoint only supports POST requests"}, status=405)
 
 
-@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def create_user(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            password = data.get("password")
+    data = request.data
+    username = data.get("username")
+    password = data.get("password")
 
-            if not username or not password:
-                return JsonResponse({"error": "Username and password are required."}, status=400)
+    if not username or not password:
+        return Response({"error": "Username and password are required"}, status=400)
 
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({"error": "A user with that username already exists"}, status=400)
+    if User.objects.filter(username=username).exists():
+        return Response({"error": "A user with that username already exists"}, status=400)
 
-            user = User.objects.create_user(
-                username=username, password=password)
+    user = User.objects.create_user(username=username, password=password)
 
-            return JsonResponse({"message": "User created successfully", "user_id": user.id}, status=200)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data."}, status=400)
-
-    else:
-        return JsonResponse({"error": "This endpoint only supports POST requests."}, status=405)
+    return Response({"message": "User created succesfully"}, status=200)
 
 
 @api_view(["GET"])
-@permission_classes({IsAuthenticated})
+@permission_classes([IsAuthenticated])
 def get_current_user(request):
     user = request.user
     user_data = {
@@ -82,7 +74,7 @@ def get_current_user(request):
 
 
 @api_view(["PATCH"])
-@permission_classes({IsAuthenticated})
+@permission_classes([IsAuthenticated])
 def update_current_user(request):
     user = request.user
     data = request.data
@@ -108,7 +100,7 @@ def update_current_user(request):
 
 
 @api_view(["DELETE"])
-@permission_classes({IsAuthenticated})
+@permission_classes([IsAuthenticated])
 def delete_current_user(request):
     user = request.user
     user.delete()
@@ -123,7 +115,7 @@ def delete_current_user(request):
 
 
 @api_view(["POST"])
-@permission_classes({IsAuthenticated})
+@permission_classes([IsAuthenticated])
 def create_repo(request):
     user = request.user
     data = request.data
@@ -154,7 +146,7 @@ def create_repo(request):
 
 
 @api_view(["DELETE"])
-@permission_classes({IsAuthenticated})
+@permission_classes([IsAuthenticated])
 def delete_repo(request):
     user = request.user
     data = request.data
@@ -178,7 +170,7 @@ def delete_repo(request):
 # region COMMITS
 
 @api_view(["POST"])
-@permission_classes({IsAuthenticated})
+@permission_classes([IsAuthenticated])
 def create_commit(request):
     user = request.user
     data = request.data
