@@ -16,32 +16,25 @@ from .models import User, Repo, Commit
 # region USER
 
 
-@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])  # Unauthenticated users can log in
 def jwt_generation(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            password = data.get("password")
+    data = request.data
+    username = data.get("username")
+    password = data.get("password")
 
-            if not username or not password:
-                return JsonResponse({"error": "Username and password are required."}, status=400)
+    if not username or not password:
+        return Response({"error": "Username and password are required."}, status=400)
 
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                refresh = RefreshToken.for_user(user)
-                return JsonResponse({
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }, status=200)
-            else:
-                return JsonResponse({"error": "Invalid username or password"}, status=401)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data."}, status=400)
-
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }, status=200)
     else:
-        return JsonResponse({"error": "This enpoint only supports POST requests"}, status=405)
+        return Response({"error": "Invalid username or password"}, status=401)
 
 
 @api_view(["POST"])
