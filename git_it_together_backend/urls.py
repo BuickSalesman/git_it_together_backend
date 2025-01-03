@@ -19,7 +19,7 @@ from django.urls import path
 from core.views import create_user, create_repo, create_commit
 from core.views import update_current_user
 from core.views import delete_current_user, delete_repo
-from core.views import get_current_user
+from core.views import get_current_user, get_repos
 from core.views import jwt_generation
 # get_repos, get_commits
 
@@ -37,7 +37,7 @@ urlpatterns = [
     path("users/me/delete/", delete_current_user, name="delete_current_user"),
 
     path("repos/create/", create_repo, name="create_repo"),
-    # path("repos/", get_repos, name="get_repos"),
+    path("repos/", get_repos, name="get_repos"),
     path("repos/delete/", delete_repo, name="delete_repo"),
 
     path("commits/create/", create_commit, name="create_commit"),

@@ -17,7 +17,7 @@ from .models import User, Repo, Commit
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])  # Unauthenticated users can log in
+@permission_classes([AllowAny])
 def jwt_generation(request):
     data = request.data
     username = data.get("username")
@@ -43,6 +43,10 @@ def create_user(request):
     data = request.data
     username = data.get("username")
     password = data.get("password")
+
+    print(request)
+    print("hello")
+    print(data)
 
     if not username or not password:
         return Response({"error": "Username and password are required"}, status=400)
@@ -120,7 +124,7 @@ def create_repo(request):
         return Response({"error": "Repository must have a name."}, status=400)
 
     if Repo.objects.filter(user=user, name=name).exists():
-        return Response({"error": "A repo of thius name already exists for this user."}, status=400)
+        return Response({"error": "A repo of this name already exists for this user."}, status=400)
 
     repo = Repo.objects.create(
         user=user,
@@ -136,6 +140,27 @@ def create_repo(request):
         "notes_enabled": repo.notes_enabled,
         "created_at": repo.created_at.isoformat()
     }, status=201)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_repos(request):
+    user = request.user
+    repos = Repo.objects.filter(user=user)
+
+    user_repos = [
+        {
+            "id": repo.id,
+            "name": repo.name,
+            "notes_enabled": repo.notes_enabled,
+            "created_at": repo.created_at
+        }
+        for repo in repos
+    ]
+
+    return Response({
+        "user_repos": user_repos
+    })
 
 
 @api_view(["DELETE"])
