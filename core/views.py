@@ -1,6 +1,3 @@
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
@@ -43,13 +40,13 @@ def create_user(request):
     data = request.data
     username = data.get("username")
     password = data.get("password")
-
-    print(request)
-    print("hello")
-    print(data)
+    password_confirmation = data.get("password_confirmation")
 
     if not username or not password:
         return Response({"error": "Username and password are required"}, status=400)
+
+    if not password_confirmation or password != password_confirmation:
+        return Response({"error": "Passwords do not match"}, status=400)
 
     if User.objects.filter(username=username).exists():
         return Response({"error": "A user with that username already exists"}, status=400)
