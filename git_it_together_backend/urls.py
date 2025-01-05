@@ -43,9 +43,7 @@ urlpatterns = [
     path("commits/create/", create_commit, name="create_commit"),
     path("commits/", get_commits, name="get_commits"),
 
-    # path("commits/", get_commits, name="get_commits"),
-
-    path("auth/test_token", jwt_generation, name="jwt_generation"),
+    path("auth/token/", jwt_generation, name="jwt_generation"),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
