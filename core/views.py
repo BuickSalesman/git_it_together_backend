@@ -115,7 +115,7 @@ def create_repo(request):
     data = request.data
 
     name = data.get("name")
-    notes_enabled = data.get("notes_enabled", False)
+    notes_enabled = data.get("notes_enabled") == "true"
 
     if not name:
         return Response({"error": "Repository must have a name."}, status=400)
