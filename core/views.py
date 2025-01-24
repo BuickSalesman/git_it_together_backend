@@ -143,14 +143,15 @@ def create_repo(request):
 @permission_classes([IsAuthenticated])
 def get_repos(request):
     user = request.user
-    repos = Repo.objects.filter(user=user)
+    repos = Repo.objects.filter(user=user).order_by("-updated_at")
 
     user_repos = [
         {
             "id": repo.id,
             "name": repo.name,
             "notes_enabled": repo.notes_enabled,
-            "created_at": repo.created_at.isoformat()
+            "created_at": repo.created_at.isoformat(),
+            "updated_at": repo.updated_at.isoformat()
         }
         for repo in repos
     ]
