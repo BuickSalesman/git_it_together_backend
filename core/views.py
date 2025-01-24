@@ -209,6 +209,8 @@ def create_commit(request):
         note_body=note_body
     )
 
+    repo.save()
+
     return Response({
         "message": "Commit created successfully",
         "commit_id": commit.id,
