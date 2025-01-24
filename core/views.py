@@ -129,6 +129,12 @@ def create_repo(request):
         notes_enabled=notes_enabled
     )
 
+    commit = Commit.objects.create(
+        repo=repo
+    )
+
+    repo.save()
+
     return Response({
         "message": "Repository created successfully",
         "repo_id": repo.id,
