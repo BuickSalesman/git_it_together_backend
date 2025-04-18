@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import dj_database_url
+
 from decouple import config
 from pathlib import Path
 from datetime import timedelta
@@ -28,7 +30,7 @@ SECRET_KEY = 'django-insecure-1cebq+&ca839@je002td&38ga2$ade%fhrc7urytr2-_89+*r3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["git-it-together.onrender.com"]
 
 
 # Application definition
@@ -82,6 +84,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://localhost:8000",
+    "https://git-it-together.netlify.app",
+
 ]
 
 ROOT_URLCONF = 'git_it_together_backend.urls'
@@ -109,14 +113,11 @@ WSGI_APPLICATION = 'git_it_together_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
-    }
+    'default': dj_database_url.config(
+        default=f"postgres://{config('DB_USER')}:{config('DB_PASSWORD')}@{config('DB_HOST')}:{config('DB_PORT')}/{config('DB_NAME')}",
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 }
 
 
