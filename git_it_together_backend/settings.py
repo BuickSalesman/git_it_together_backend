@@ -30,7 +30,8 @@ SECRET_KEY = 'django-insecure-1cebq+&ca839@je002td&38ga2$ade%fhrc7urytr2-_89+*r3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["git-it-together-backend.onrender.com"]
+ALLOWED_HOSTS = ["git-it-together-backend.onrender.com",
+                 "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -114,7 +115,11 @@ WSGI_APPLICATION = 'git_it_together_backend.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, conn_health_checks=True)
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 }
 
 
