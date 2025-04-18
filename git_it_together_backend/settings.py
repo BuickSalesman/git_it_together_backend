@@ -114,12 +114,7 @@ WSGI_APPLICATION = 'git_it_together_backend.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(
-        # fallback only for local dev
-        default=config("DATABASE_URL"),
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+    'default': dj_database_url.config(conn_max_age=600, conn_health_checks=True)
 }
 
 
