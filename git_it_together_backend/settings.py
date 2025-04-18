@@ -112,9 +112,11 @@ WSGI_APPLICATION = 'git_it_together_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"postgres://{config('DB_USER')}:{config('DB_PASSWORD')}@{config('DB_HOST')}:{config('DB_PORT')}/{config('DB_NAME')}",
+        # fallback only for local dev
+        default=config("DATABASE_URL"),
         conn_max_age=600,
         conn_health_checks=True
     )
