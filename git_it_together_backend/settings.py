@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-1cebq+&ca839@je002td&38ga2$ade%fhrc7urytr2-_89+*r3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["git-it-together.onrender.com"]
+ALLOWED_HOSTS = ["git-it-together-backend.onrender.com"]
 
 
 # Application definition
