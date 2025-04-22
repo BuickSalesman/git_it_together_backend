@@ -1,14 +1,17 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from django.views.decorators.cache import cache_page
 
-from django.shortcuts import render
 
 # Create your views here.
 
 from .models import User, Repo, Commit
+
+User = get_user_model
 
 # region USER
 
@@ -32,6 +35,21 @@ def jwt_generation(request):
         }, status=200)
     else:
         return Response({"error": "Invalid username or password"}, status=401)
+
+
+@cache_page(60 * 60 * 24 * 2)
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_all_users(request):
+    users = User.objects.all()
+    users_data = [
+        {
+            "id": user.id,
+            "date_joined": user.date_joined.isoformat()
+        }
+        for user in users
+    ]
+    return Response({"users": users_data}, status=200)
 
 
 @api_view(["POST"])
