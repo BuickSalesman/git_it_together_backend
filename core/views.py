@@ -16,27 +16,6 @@ User = get_user_model
 # region USER
 
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def jwt_generation(request):
-    data = request.data
-    username = data.get("username")
-    password = data.get("password")
-
-    if not username or not password:
-        return Response({"error": "Username and password are required."}, status=400)
-
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        }, status=200)
-    else:
-        return Response({"error": "Invalid username or password"}, status=401)
-
-
 @cache_page(60 * 60 * 24 * 2)
 @api_view(["GET"])
 @permission_classes([AllowAny])
