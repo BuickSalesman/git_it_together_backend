@@ -20,7 +20,6 @@ from core.views import create_user, create_repo, create_commit
 from core.views import update_current_user
 from core.views import delete_current_user, delete_repo
 from core.views import get_all_users, get_current_user, get_repos, get_commits
-from core.views import jwt_generation
 # get_repos, get_commits
 
 from rest_framework_simplejwt.views import (
